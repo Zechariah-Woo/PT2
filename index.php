@@ -1,29 +1,50 @@
-<?php 
+<?php
+$products = [
+    "Taro" => 130,
+    "Thai tea" => 140,
+    "Matcha Cheesecake" => 145,
+    "Okinawa" => 125
+];
 
-$cars = array("Toyota","Mitsubishi","Nissan","Honda");
-
-echo"<ol>";
-foreach ($cars as $cars) 
-{
-    echo "<li> car </li>";
-
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $orderSummary = "";
+    $totalAmount = 0;
+    foreach ($products as $product => $price) {
+        $qty = (int)($_POST['qty'][$product] ?? 0);
+        if ($qty > 0) {
+            $cost = $qty * $price;
+            $orderSummary .= "$qty PC of $product. P$cost<br>";
+            $totalAmount += $cost;
+        }
+    }
+    $orderSummary = "You ordered:<br>$orderSummary<strong>Total: P$totalAmount</strong>";
 }
-echo "</ol>";
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ordering System</title>
 </head>
 <body>
-    <class = "list-container">
-        <?php
+    <h2>Ordering System</h2>
+    <form method="POST">
+        <?php foreach ($products as $product => $price): ?>
+            <div>
+                <label>
+                    <?= $product ?> - P<?= $price ?>
+                </label>
+                <input type="number" name="qty[<?= $product ?>]" value="0">
+            </div>
+        <?php endforeach; ?>
+        <br>
+        <button type="submit">Add to basket</button>
+    </form>
 
-
-        ?>
-    </div>
+    <?php if (isset($orderSummary)): ?>
+        <div>
+            <?= $orderSummary ?>
+        </div>
+    <?php endif; ?>
 </body>
-</html>
+</html> 
